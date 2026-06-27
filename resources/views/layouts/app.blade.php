@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Careers') · NovaStackHub</title>
+    <title>@yield('title', 'Apply') · NovaStackHub</title>
     <meta name="description" content="Careers at NovaStackHub — explore open positions and apply online.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
