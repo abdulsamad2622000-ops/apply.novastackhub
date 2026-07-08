@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Careers')
+@section('title', 'Apply')
 
 @push('head')
 <style>
