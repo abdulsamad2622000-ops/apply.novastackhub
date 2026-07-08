@@ -4,13 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Apply') · NovaStackHub</title>
+    <title>@yield('title', 'Careers') · NovaStackHub</title>
     <meta name="description" content="Careers at NovaStackHub — explore open positions and apply online.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         :root {
             --ink:        #0C1C46;
@@ -40,13 +40,16 @@
 
         html { -webkit-text-size-adjust: 100%; }
 
-        body {
+      body {
             margin: 0;
             font-family: var(--body);
             color: var(--text);
             background: var(--page);
             line-height: 1.55;
             -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         a { color: var(--violet-600); }
@@ -90,8 +93,7 @@
         .back-link:hover { color: #fff; border-color: rgba(255,255,255,.4); }
 
         /* ---------- Content ---------- */
-        main { padding: 34px 0 64px; }
-
+main { padding: 34px 0 64px; flex: 1 0 auto; }
         .eyebrow {
             font-family: var(--display);
             text-transform: uppercase; letter-spacing: .16em;
@@ -223,25 +225,89 @@
         .note-warn svg { flex: none; margin-top: 1px; }
 
         /* footer */
-        footer { padding: 26px 0 40px; text-align: center; color: var(--muted); font-size: 12.5px; }
-        footer a { color: var(--muted); text-decoration: none; }
+footer { padding: 26px 0 40px; text-align: center; color: var(--muted); font-size: 12.5px; flex-shrink: 0; }        footer a { color: var(--muted); text-decoration: none; }
         footer a:hover { color: var(--text); }
 
         @media (prefers-reduced-motion: reduce) {
             * { transition: none !important; animation: none !important; }
         }
 
+        @media (max-width: 768px) {
+            /* Admin pages use less side padding on phones/tablets */
+            body.is-admin .wrap { padding: 0 14px; }
+        }
+
         @media (max-width: 560px) {
-            .card-body { padding: 24px 20px; }
-            .divider { margin: 22px -20px; }
+            .wrap { padding: 0 16px; }
+            .masthead .wrap { padding-top: 15px; padding-bottom: 15px; }
+            .brand-name { font-size: 15.5px; }
+            .brand-mark { width: 26px; height: 26px; }
+            .back-link { padding: 6px 10px; font-size: 12px; }
+            main { padding: 24px 0 48px; }
+            .card-body { padding: 22px 18px; }
+            .divider { margin: 20px -18px; }
+            .lead-title { font-size: 21px; }
             .actions { flex-direction: column-reverse; align-items: stretch; }
             .btn { width: 100%; }
             .btn-ghost { text-align: center; }
+            .meta-row { gap: 6px; }
         }
+
+        @media (max-width: 380px) {
+            .brand-name { font-size: 14px; }
+            .back-link span { display: none; }
+        }
+        /* ---- Admin: Tasks / Certificates / Quick Add ---- */
+        .admin-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+        .admin-header h1 { margin: 0; }
+        .admin-table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: 14px; }
+        .admin-table th, .admin-table td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line-2); }
+        .admin-table th { background: #F7F8FB; font-size: 12.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 700; }
+        .admin-table tr:last-child td { border-bottom: none; }
+        .admin-table td.actions { display: flex; gap: 12px; align-items: center; }
+        .admin-table .link-danger { background: none; border: none; color: var(--danger); cursor: pointer; font: inherit; font-size: 14px; padding: 0; }
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+        .badge-success { background: var(--success-bg); color: #0B7A52; }
+        .badge-pending { background: #FFF4E0; color: #92620B; }
+        .admin-form { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 26px; max-width: 560px; }
+        .admin-form .form-group { margin-bottom: 18px; }
+        .admin-form label { display: block; font-weight: 600; font-size: 13.5px; margin-bottom: 6px; }
+        .admin-form input[type=text], .admin-form input[type=email], .admin-form input[type=date], .admin-form input[type=number], .admin-form input[type=url], .admin-form select, .admin-form textarea {
+            width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 9px; font: inherit; font-size: 14px;
+        }
+        .admin-form .form-checkbox label { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+        .alert { padding: 12px 16px; border-radius: 10px; font-size: 13.5px; margin-bottom: 18px; }
+        .alert-success { background: var(--success-bg); color: #0B7A52; border: 1px solid #D2F0E1; }
+        .alert-error { background: var(--danger-bg); color: var(--danger); border: 1px solid #F4C7C7; }
+        .alert ul { margin: 0; padding-left: 18px; }
+
+        /* ---- Student task / verify pages ---- */
+        .auth-wrap { display: flex; justify-content: center; padding: 20px 0; }
+        .auth-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 30px 32px; max-width: 440px; width: 100%; }
+        .auth-card h1 { margin-top: 0; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-weight: 600; font-size: 13.5px; margin-bottom: 6px; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 9px; font: inherit; font-size: 14px; }
+        .btn-primary { background: linear-gradient(135deg, var(--violet-600), var(--cyan)); color: #fff; border: none; padding: 11px 20px; border-radius: 9px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block; font-size: 14px; }
+        .btn-secondary { background: #fff; border: 1px solid var(--line); color: var(--text); padding: 11px 20px; border-radius: 9px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; font-size: 14px; }
+        .tasks-wrap { display: flex; flex-direction: column; gap: 18px; }
+        .tasks-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+        .task-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px; }
+        .task-card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .submission-info { background: #F7F8FB; border-radius: 9px; padding: 12px 14px; margin-top: 12px; font-size: 13.5px; }
+        .submit-toggle { margin-top: 14px; }
+        .submit-toggle summary { cursor: pointer; font-weight: 600; color: var(--violet-600); font-size: 13.5px; }
+        .task-form { margin-top: 14px; }
+        .pagination-simple { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 22px; }
+        .pg-btn { padding: 8px 16px; border: 1px solid var(--line); border-radius: 8px; text-decoration: none; color: var(--text); font-size: 13.5px; font-weight: 600; }
+        .pg-btn:hover { background: #F3F4F8; }
+        .pg-disabled { color: var(--muted); cursor: not-allowed; opacity: 0.5; }
+        .pg-info { color: var(--muted); font-size: 13.5px; }
     </style>
     @stack('head')
 </head>
 <body class="{{ request()->is('admin*') ? 'is-admin' : '' }}">
+   @if (request()->is('admin*'))
     <header class="masthead">
         <div class="wrap">
             <div class="topbar">
@@ -259,25 +325,39 @@
                     </svg>
                     <span class="brand-name">Nova<b>Stack</b>Hub</span>
                 </a>
-                <a class="back-link" href="https://www.novastackhub.com/">
-                    &larr; Back to site
-                </a>
             </div>
         </div>
     </header>
-
+@else
+    @include('partials.site-nav')
+@endif
+    <style>
+        .site-nav { display: flex; align-items: center; gap: 22px; margin-left: auto; }
+        .site-nav a { color: #4B5563; text-decoration: none; font-size: 14.5px; font-weight: 500; }
+        .site-nav a:hover { color: #2563EB; }
+        .site-nav a.is-active { color: #2563EB; font-weight: 600; }
+        .topbar { display: flex; align-items: center; justify-content: space-between; }
+        @media (max-width: 640px) {
+            .site-nav { gap: 14px; }
+            .site-nav a { font-size: 13px; }
+        }
+    </style>
     <main>
         <div class="wrap">
             @yield('content')
         </div>
     </main>
 
+   @if (request()->is('admin*'))
     <footer>
         <div class="wrap">
             &copy; {{ date('Y') }} NovaStackHub · Karachi, Pakistan ·
             <a href="https://www.novastackhub.com/">novastackhub.com</a>
         </div>
     </footer>
+@else
+    @include('partials.site-footer')
+@endif
 
     @stack('scripts')
 </body>

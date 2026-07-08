@@ -6,6 +6,11 @@ use App\Http\Controllers\Admin\JobController as AdminJobController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\JobController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\Admin\TaskController as AdminTaskController;
+use App\Http\Controllers\VerifyController;
+use App\Http\Controllers\Admin\CertificateController;
+use App\Http\Controllers\Admin\QuickAddController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,5 +54,59 @@ Route::prefix('admin')->group(function () {
         Route::get('applications/{application}/edit', [AdminApplicationController::class, 'edit'])->name('admin.applications.edit');
         Route::put('applications/{application}', [AdminApplicationController::class, 'update'])->name('admin.applications.update');
         Route::get('applications/{application}/cv', [AdminApplicationController::class, 'downloadCv'])->name('admin.applications.cv');
+        Route::get('applications-quick-add', [QuickAddController::class, 'form'])->name('admin.applications.quickadd');
+        Route::post('applications-quick-add', [QuickAddController::class, 'store'])->name('admin.applications.quickadd.store');
     });
 });
+
+// ---- Student Task Submission ----
+Route::get('/submit-task', [TaskController::class, 'verifyForm'])->name('tasks.verify');
+Route::post('/submit-task', [TaskController::class, 'verifySubmit'])->name('tasks.verify.submit');
+Route::get('/submit-task/logout', [TaskController::class, 'logout'])->name('tasks.logout');
+Route::get('/submit-task/tasks', [TaskController::class, 'index'])->name('tasks.index');
+Route::post('/submit-task/tasks/{task}', [TaskController::class, 'submit'])->name('tasks.submit');
+
+// ---- Admin Tasks (CRUD + submissions) + Certificates ----
+Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/tasks', [AdminTaskController::class, 'index'])->name('tasks.index');
+    Route::get('/tasks/create', [AdminTaskController::class, 'create'])->name('tasks.create');
+    Route::post('/tasks', [AdminTaskController::class, 'store'])->name('tasks.store');
+    Route::get('/tasks/{task}/edit', [AdminTaskController::class, 'edit'])->name('tasks.edit');
+    Route::put('/tasks/{task}', [AdminTaskController::class, 'update'])->name('tasks.update');
+    Route::delete('/tasks/{task}', [AdminTaskController::class, 'destroy'])->name('tasks.destroy');
+    Route::get('/tasks/{task}/submissions', [AdminTaskController::class, 'submissions'])->name('tasks.submissions');
+
+
+
+
+// Task Applicants (imported from Google Form)
+    Route::get('/task-applicants', [\App\Http\Controllers\Admin\TaskApplicantController::class, 'index'])->name('task-applicants.index');
+    Route::get('/task-applicants/import', [\App\Http\Controllers\Admin\TaskApplicantController::class, 'importForm'])->name('task-applicants.import');
+    Route::post('/task-applicants/import', [\App\Http\Controllers\Admin\TaskApplicantController::class, 'importStore'])->name('task-applicants.import.store');
+    Route::delete('/task-applicants/{taskApplicant}', [\App\Http\Controllers\Admin\TaskApplicantController::class, 'destroy'])->name('task-applicants.destroy');
+
+    // Certificates
+    Route::get('/certificates', [CertificateController::class, 'index'])->name('certificates.index');
+
+
+
+
+
+
+
+
+    // Certificates
+    Route::get('/certificates', [CertificateController::class, 'index'])->name('certificates.index');
+    Route::get('/certificates/create', [CertificateController::class, 'create'])->name('certificates.create');
+    Route::post('/certificates', [CertificateController::class, 'store'])->name('certificates.store');
+    Route::get('/certificates/{certificate}/edit', [CertificateController::class, 'edit'])->name('certificates.edit');
+    Route::put('/certificates/{certificate}', [CertificateController::class, 'update'])->name('certificates.update');
+   
+    Route::delete('/certificates/{certificate}', [CertificateController::class, 'destroy'])->name('certificates.destroy');
+Route::get('/certificates/{certificate}/qr', [CertificateController::class, 'qrCode'])->name('certificates.qr');
+    });
+
+
+// ---- Certificate Verification (public) ----
+Route::get('/verify', [VerifyController::class, 'form'])->name('verify.form');
+Route::post('/verify', [VerifyController::class, 'check'])->name('verify.check');

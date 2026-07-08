@@ -1,9 +1,18 @@
-@php $current = request()->routeIs('admin.jobs.*') ? 'jobs' : (request()->routeIs('admin.applications.*') ? 'applications' : ''); @endphp
-<div class="admin-nav">
+@php
+    $current = request()->routeIs('admin.jobs.*') ? 'jobs'
+        : (request()->routeIs('admin.tasks.*') ? 'tasks'
+        : (request()->routeIs('admin.certificates.*') ? 'certificates'
+        : (request()->routeIs('admin.applications.quickadd*') ? 'quickadd'
+: (request()->routeIs('admin.task-applicants.*') ? 'task-applicants'
+        : (request()->routeIs('admin.applications.*') ? 'applications' : '')))));@endphp<div class="admin-nav">
     <div class="admin-nav-links">
-        <a href="{{ route('admin.jobs.index') }}" class="{{ $current === 'jobs' ? 'is-active' : '' }}">Jobs</a>
-        <a href="{{ route('admin.applications.index') }}" class="{{ $current === 'applications' ? 'is-active' : '' }}">Applications</a>
-    </div>
+       <a href="{{ route('admin.jobs.index') }}" class="{{ $current === 'jobs' ? 'is-active' : '' }}">Jobs</a>
+<a href="{{ route('admin.applications.index') }}" class="{{ $current === 'applications' ? 'is-active' : '' }}">Applications</a>
+        <a href="{{ route('admin.task-applicants.index') }}" class="{{ $current === 'task-applicants' ? 'is-active' : '' }}">Task Applicants</a>        
+        
+        <a href="{{ route('admin.tasks.index') }}" class="{{ $current === 'tasks' ? 'is-active' : '' }}">Tasks</a>
+        <a href="{{ route('admin.certificates.index') }}" class="{{ $current === 'certificates' ? 'is-active' : '' }}">Certificates</a>
+        <a href="{{ route('admin.applications.quickadd') }}" class="{{ $current === 'quickadd' ? 'is-active' : '' }}">Quick Add</a>    </div>
     <form method="POST" action="{{ route('admin.logout') }}">
         @csrf
         <button class="logout-btn" type="submit">Log out</button>
