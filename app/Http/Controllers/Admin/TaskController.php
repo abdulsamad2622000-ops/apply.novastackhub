@@ -81,7 +81,7 @@ class TaskController extends Controller
     public function submissions(Task $task)
     {
         $submissions = $task->submissions()
-            ->with('application')
+            ->with('applicant')
             ->latest()
             ->get();
 

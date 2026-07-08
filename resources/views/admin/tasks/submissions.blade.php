@@ -24,8 +24,8 @@
     <tbody>
         @forelse ($submissions as $submission)
             <tr>
-                <td>{{ $submission->application->full_name ?? '-' }}</td>
-                <td>{{ $submission->application->email ?? '-' }}</td>
+                <td>{{ $submission->applicant->full_name ?? '-' }}</td>
+                <td>{{ $submission->applicant->email ?? '-' }}</td>
                 <td>
                     @if ($submission->link)
                         <a href="{{ $submission->link }}" target="_blank" rel="noopener">Open</a>
