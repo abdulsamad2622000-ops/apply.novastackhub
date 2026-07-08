@@ -34,8 +34,7 @@ class TaskController extends Controller
         if (! $applicant) {
             return back()
                 ->withInput()
-                ->withErrors(['identifier' => 'Yeh email ya phone humare records me nahi mila. Sahi email/phone daalein jo form fill karte waqt use kiya tha.']);
-        }
+->withErrors(['identifier' => 'This email or phone was not found in our records. Please enter the correct email/phone you used when filling the form.']);        }
 
         Session::put('task_applicant_id', $applicant->id);
 
