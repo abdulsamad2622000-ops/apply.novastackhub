@@ -95,7 +95,7 @@
                         </div>
                     @endif
 
-                    <h4>Kaam ka Proof (koi ek zaroori)</h4>
+                    <h4>Proof of Work (at least one required)</h4>
 
                     <div class="form-group">
                         <label>GitHub Repo Link</label>
@@ -103,12 +103,12 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Doosra Link (Drive, etc.)</label>
+                        <label>Other Link (Drive, etc.)</label>
                         <input type="url" name="link" value="{{ old('link', $submission->link ?? '') }}" placeholder="https://...">
                     </div>
 
                     <div class="form-group">
-                        <label>Ya Upload File</label>
+                        <label>Or Upload File</label>
                         <input type="file" name="file">
                         @if ($submission && $submission->file_original_name)
                             <p class="muted">Current: {{ $submission->file_original_name }}</p>
@@ -134,7 +134,7 @@
                     </div>
 
                     <hr>
-                    <h4>LinkedIn Proof (zaroori)</h4>
+                    <h4>LinkedIn Proof (required)</h4>
 
                     <div class="form-group">
                         <label>LinkedIn Post Link</label>
