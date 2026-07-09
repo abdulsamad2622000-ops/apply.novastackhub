@@ -74,7 +74,6 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         $task->delete();
-
         return redirect()->route('admin.tasks.index')->with('status', 'Task delete ho gaya ✅');
     }
 
@@ -86,5 +85,20 @@ class TaskController extends Controller
             ->get();
 
         return view('admin.tasks.submissions', ['task' => $task, 'submissions' => $submissions]);
+    }
+
+    public function updateSubmissionStatus(Request $request, TaskSubmission $submission)
+    {
+        $validated = $request->validate([
+            'status' => ['required', 'in:pending,approved,needs_revision'],
+            'admin_feedback' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $submission->update([
+            'status' => $validated['status'],
+            'admin_feedback' => $validated['admin_feedback'] ?? null,
+        ]);
+
+        return back()->with('status', 'Submission status update ho gaya ✅');
     }
 }

@@ -75,7 +75,7 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::put('/tasks/{task}', [AdminTaskController::class, 'update'])->name('tasks.update');
     Route::delete('/tasks/{task}', [AdminTaskController::class, 'destroy'])->name('tasks.destroy');
     Route::get('/tasks/{task}/submissions', [AdminTaskController::class, 'submissions'])->name('tasks.submissions');
-
+    Route::patch('/task-submissions/{submission}/status', [AdminTaskController::class, 'updateSubmissionStatus'])->name('tasks.submissions.updateStatus');
 
 
 

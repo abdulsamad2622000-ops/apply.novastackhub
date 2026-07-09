@@ -34,7 +34,8 @@ class TaskController extends Controller
         if (! $applicant) {
             return back()
                 ->withInput()
-->withErrors(['identifier' => 'This email or phone was not found in our records. Please enter the correct email/phone you used when filling the form.']);        }
+                ->withErrors(['identifier' => 'This email or phone was not found in our records. Please enter the correct email/phone you used when filling the form.']);
+        }
 
         Session::put('task_applicant_id', $applicant->id);
 
@@ -90,13 +91,24 @@ class TaskController extends Controller
 
         $validator = Validator::make($request->all(), [
             'link' => ['nullable', 'url', 'max:2048'],
+            'github_link' => ['nullable', 'url', 'max:2048'],
+            'live_demo_url' => ['nullable', 'url', 'max:2048'],
+            'tech_stack' => ['nullable', 'string', 'max:500'],
             'notes' => ['nullable', 'string', 'max:2000'],
             'file' => ['nullable', 'file', 'max:20480', 'mimes:pdf,doc,docx,zip,rar,png,jpg,jpeg'],
+            'linkedin_post_link' => ['required', 'url', 'max:2048'],
+            'linkedin_screenshot' => ['required', 'image', 'max:10240'],
+            'confirmed_own_work' => ['required', 'accepted'],
+        ], [
+            'linkedin_post_link.required' => 'LinkedIn post ka link zaroori hai.',
+            'linkedin_screenshot.required' => 'LinkedIn screenshot upload karna zaroori hai.',
+            'confirmed_own_work.required' => 'Aapko confirm karna hoga ke yeh aapka apna kaam hai.',
+            'confirmed_own_work.accepted' => 'Aapko confirm karna hoga ke yeh aapka apna kaam hai.',
         ]);
 
         $validator->after(function ($validator) use ($request) {
-            if (! $request->filled('link') && ! $request->hasFile('file')) {
-                $validator->errors()->add('file', 'Link ya file me se koi ek zaroor dein.');
+            if (! $request->filled('github_link') && ! $request->filled('link') && ! $request->hasFile('file')) {
+                $validator->errors()->add('proof', 'GitHub link, doosra link, ya file me se koi ek zaroor dein.');
             }
         });
 
@@ -108,10 +120,13 @@ class TaskController extends Controller
         ]);
 
         $submission->notes = $validated['notes'] ?? null;
+        $submission->tech_stack = $validated['tech_stack'] ?? null;
+        $submission->linkedin_post_link = $validated['linkedin_post_link'];
+        $submission->confirmed_own_work = true;
 
-        if ($request->filled('link')) {
-            $submission->link = $validated['link'];
-        }
+        $submission->link = $request->filled('link') ? $validated['link'] : null;
+        $submission->github_link = $request->filled('github_link') ? $validated['github_link'] : null;
+        $submission->live_demo_url = $request->filled('live_demo_url') ? $validated['live_demo_url'] : null;
 
         if ($request->hasFile('file')) {
             if ($submission->file_path) {
@@ -124,6 +139,22 @@ class TaskController extends Controller
             $submission->file_path = $path;
             $submission->file_original_name = $file->getClientOriginalName();
         }
+
+        if ($request->hasFile('linkedin_screenshot')) {
+            if ($submission->linkedin_screenshot_path) {
+                Storage::disk('public')->delete($submission->linkedin_screenshot_path);
+            }
+
+            $screenshot = $request->file('linkedin_screenshot');
+            $screenshotPath = $screenshot->store('linkedin-screenshots', 'public');
+
+            $submission->linkedin_screenshot_path = $screenshotPath;
+            $submission->linkedin_screenshot_original_name = $screenshot->getClientOriginalName();
+        }
+
+        // Re-submission goes back to pending for admin review
+        $submission->status = TaskSubmission::STATUS_PENDING;
+        $submission->admin_feedback = null;
 
         $submission->save();
 
