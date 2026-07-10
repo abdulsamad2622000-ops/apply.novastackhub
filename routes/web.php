@@ -11,7 +11,7 @@ use App\Http\Controllers\Admin\TaskController as AdminTaskController;
 use App\Http\Controllers\VerifyController;
 use App\Http\Controllers\Admin\CertificateController;
 use App\Http\Controllers\Admin\QuickAddController;
-
+use App\Http\Controllers\Admin\TaskApplicantQuickAddController;
 /*
 |--------------------------------------------------------------------------
 | Public careers / job portal
@@ -84,8 +84,8 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/task-applicants/import', [\App\Http\Controllers\Admin\TaskApplicantController::class, 'importForm'])->name('task-applicants.import');
     Route::post('/task-applicants/import', [\App\Http\Controllers\Admin\TaskApplicantController::class, 'importStore'])->name('task-applicants.import.store');
     Route::delete('/task-applicants/{taskApplicant}', [\App\Http\Controllers\Admin\TaskApplicantController::class, 'destroy'])->name('task-applicants.destroy');
-
-    // Certificates
+Route::get('/task-applicants-quick-add', [TaskApplicantQuickAddController::class, 'form'])->name('taskApplicants.quickadd');
+    Route::post('/task-applicants-quick-add', [TaskApplicantQuickAddController::class, 'store'])->name('taskApplicants.quickadd.store');    // Certificates
     Route::get('/certificates', [CertificateController::class, 'index'])->name('certificates.index');
 
 
