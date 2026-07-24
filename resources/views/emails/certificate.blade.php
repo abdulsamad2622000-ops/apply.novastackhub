@@ -43,7 +43,22 @@
         </div>
 
         <div style="text-align:center;font-size:11px;color:#8a93a6;padding:16px;">
-            NovaStackHub &middot; Karachi, Pakistan &middot; novastackhub.com
+            <div style="text-align:left;">
+                <div style="font-size:13px;font-weight:bold;color:#12256b;margin-bottom:8px;">NovaStackHub</div>
+                <div style="font-size:12px;color:#5a6b7e;line-height:1.8;">
+                    Office # M-3-61, China Shopping Center, A.H. Road, Saddar, Karachi.<br>
+                    <a href="mailto:info@novastackhub.com" style="color:#2563eb;text-decoration:none;">info@novastackhub.com</a><br>
+                    <a href="https://wa.me/923168738819" style="color:#2563eb;text-decoration:none;">+92 316 8738819 (WhatsApp)</a><br>
+                    Mon&ndash;Thu &amp; Sat: 11:30 AM &ndash; 7:30 PM &middot; Fri: 3:00 PM &ndash; 7:30 PM &middot; Sun: Closed
+                </div>
+                <div style="font-size:12px;margin-top:12px;">
+                    <a href="https://www.facebook.com/share/1CzWv5wcNX/" style="color:#2563eb;text-decoration:none;">Facebook</a> &nbsp;&middot;&nbsp;
+                    <a href="https://www.instagram.com/novastackhub" style="color:#2563eb;text-decoration:none;">Instagram</a> &nbsp;&middot;&nbsp;
+                    <a href="https://www.linkedin.com/company/novastackhub/" style="color:#2563eb;text-decoration:none;">LinkedIn</a> &nbsp;&middot;&nbsp;
+                    <a href="https://www.novastackhub.com" style="color:#2563eb;text-decoration:none;">novastackhub.com</a>
+                </div>
+                <div style="font-size:11px;color:#9aa3b2;margin-top:12px;">&copy; {{ date('Y') }} NovaStackHub &mdash; All Rights Reserved.</div>
+            </div>
         </div>
     </div>
 </body>
