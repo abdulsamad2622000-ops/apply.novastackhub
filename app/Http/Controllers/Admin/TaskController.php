@@ -13,7 +13,7 @@ class TaskController extends Controller
     {
         $activeTaskId = $request->query('task_id');
 
-        $submissions = TaskSubmission::with(['task', 'taskApplicant'])
+        $submissions = TaskSubmission::with(['task', 'applicant'])
             ->when($activeTaskId, fn ($q) => $q->where('task_id', $activeTaskId))
             ->latest()
             ->get();
@@ -60,7 +60,7 @@ class TaskController extends Controller
             'is_active' => $request->boolean('is_active', true),
         ]);
 
-        return redirect()->route('admin.tasks.index')->with('status', 'Task ban gaya âœ…');
+        return redirect()->route('admin.tasks.index')->with('status', 'Task ban gaya Ã¢Å“â€¦');
     }
 
     public function edit(Task $task)
@@ -86,13 +86,13 @@ class TaskController extends Controller
             'is_active' => $request->boolean('is_active', true),
         ]);
 
-        return redirect()->route('admin.tasks.index')->with('status', 'Task update ho gaya âœ…');
+        return redirect()->route('admin.tasks.index')->with('status', 'Task update ho gaya Ã¢Å“â€¦');
     }
 
     public function destroy(Task $task)
     {
         $task->delete();
-        return redirect()->route('admin.tasks.index')->with('status', 'Task delete ho gaya âœ…');
+        return redirect()->route('admin.tasks.index')->with('status', 'Task delete ho gaya Ã¢Å“â€¦');
     }
 
     public function submissions(Task $task)
@@ -117,6 +117,6 @@ class TaskController extends Controller
             'admin_feedback' => $validated['admin_feedback'] ?? null,
         ]);
 
-        return back()->with('status', 'Submission status update ho gaya âœ…');
+        return back()->with('status', 'Submission status update ho gaya Ã¢Å“â€¦');
     }
 }
