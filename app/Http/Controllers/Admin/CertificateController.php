@@ -59,7 +59,7 @@ class CertificateController extends Controller
 
         Certificate::create($validated);
 
-        return redirect()->route('admin.certificates.index')->with('status', 'Certificate created ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦');
+        return redirect()->route('admin.certificates.index')->with('status', 'Certificate created ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦');
     }
 
     public function edit(Certificate $certificate)
@@ -85,14 +85,14 @@ class CertificateController extends Controller
 
         $certificate->update($validated);
 
-        return redirect()->route('admin.certificates.index')->with('status', 'Certificate updated ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦');
+        return redirect()->route('admin.certificates.index')->with('status', 'Certificate updated ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦');
     }
 
     public function destroy(Certificate $certificate)
     {
         $certificate->delete();
 
-        return redirect()->route('admin.certificates.index')->with('status', 'Certificate deleted ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦');
+        return redirect()->route('admin.certificates.index')->with('status', 'Certificate deleted ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦');
     }
 public function qrCode(Certificate $certificate)
     {
@@ -199,6 +199,39 @@ public function qrCode(Certificate $certificate)
         }
 
         return null;
+    }
+
+    public function quickForm()
+    {
+        return view('admin.certificates.quick');
+    }
+
+    public function quickStore(Request $request, CertificateImageService $service)
+    {
+        $data = $request->validate([
+            'full_name'  => ['required', 'string', 'max:255'],
+            'email'      => ['nullable', 'email', 'max:255'],
+            'title'      => ['required', 'string', 'max:255'],
+            'start_date' => ['nullable', 'date'],
+            'end_date'   => ['nullable', 'date'],
+        ]);
+
+        $certificate = Certificate::create([
+            'certificate_number' => $this->generateNumber(),
+            'full_name'          => $data['full_name'],
+            'email'              => $data['email'] ?? null,
+            'title'              => $data['title'],
+            'start_date'         => $data['start_date'] ?? CertificateImageService::DEFAULT_START,
+            'end_date'           => $data['end_date'] ?? CertificateImageService::DEFAULT_END,
+            'issue_date'         => now()->toDateString(),
+            'completion_date'    => $data['end_date'] ?? CertificateImageService::DEFAULT_END,
+            'status'             => 'valid',
+        ]);
+
+        return response($service->pdf($certificate), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="certificate-'.$certificate->certificate_number.'.pdf"',
+        ]);
     }
 
     public function issueApproved()

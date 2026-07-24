@@ -11,7 +11,7 @@
             @csrf
             <button type="submit" class="btn btn-secondary">Issue for approved students</button>
         </form>
-        <form method="POST" action="{{ route('admin.certificates.emailAll') }}" onsubmit="return confirm('Email certificates to all students who have not received one yet?');" style="display:inline;">@csrf<button type="submit" class="btn btn-secondary">Email all pending</button></form> <a href="{{ route('admin.certificates.create') }}" class="btn btn-primary">+ New Certificate</a>
+        <form method="POST" action="{{ route('admin.certificates.emailAll') }}" onsubmit="return confirm('Email certificates to all students who have not received one yet?');" style="display:inline;">@csrf<button type="submit" class="btn btn-secondary">Email all pending</button></form> <a href="{{ route('admin.certificates.quick') }}" class="btn btn-secondary">Quick Certificate</a> <a href="{{ route('admin.certificates.create') }}" class="btn btn-primary">+ New Certificate</a>
     </div>
 </div>
 
@@ -41,7 +41,7 @@
             <tr>
                 <td>{{ $cert->certificate_number }}</td>
                 <td>{{ $cert->full_name }}</td>
-                <td>{{ $cert->email ?: '—' }}</td>
+                <td>{{ $cert->email ?: 'â€”' }}</td>
                 <td>{{ $cert->title }}</td>
                 <td>{{ $cert->issue_date->format('d M Y') }}</td>
                 <td>
