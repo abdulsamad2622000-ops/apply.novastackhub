@@ -98,6 +98,8 @@ Route::get('/task-applicants-quick-add', [TaskApplicantQuickAddController::class
     // Certificates
     Route::get('/certificates', [CertificateController::class, 'index'])->name('certificates.index');
     Route::get('/certificates/create', [CertificateController::class, 'create'])->name('certificates.create');
+    Route::post('/certificates/issue-approved', [CertificateController::class, 'issueApproved'])->name('certificates.issueApproved');
+    Route::get('/certificates/{certificate}/download', [CertificateController::class, 'download'])->name('certificates.download');
     Route::post('/certificates', [CertificateController::class, 'store'])->name('certificates.store');
     Route::get('/certificates/{certificate}/edit', [CertificateController::class, 'edit'])->name('certificates.edit');
     Route::put('/certificates/{certificate}', [CertificateController::class, 'update'])->name('certificates.update');

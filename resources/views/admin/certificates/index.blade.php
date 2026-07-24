@@ -6,7 +6,13 @@
 @include('admin.partials.nav')
 <div class="admin-header">
     <h1>Certificates</h1>
-    <a href="{{ route('admin.certificates.create') }}" class="btn btn-primary">+ New Certificate</a>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <form method="POST" action="{{ route('admin.certificates.issueApproved') }}" onsubmit="return confirm('Issue certificates for all approved students?');" style="display:inline;">
+            @csrf
+            <button type="submit" class="btn btn-secondary">Issue for approved students</button>
+        </form>
+        <a href="{{ route('admin.certificates.create') }}" class="btn btn-primary">+ New Certificate</a>
+    </div>
 </div>
 
 @if (session('status'))
@@ -44,6 +50,7 @@
                     @endif
                 </td>
               <td class="actions">
+                    <a href="{{ route('admin.certificates.download', $cert) }}" style="color:#2563eb; font-weight:600;">Download</a>
                     <a href="{{ route('admin.certificates.qr', $cert) }}" target="_blank">QR Code</a>
                     <a href="{{ route('admin.certificates.edit', $cert) }}">Edit</a>
                     <form method="POST" action="{{ route('admin.certificates.destroy', $cert) }}" onsubmit="return confirm('Delete this certificate?');" style="display:inline">

@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Certificate;
+use App\Models\TaskApplicant;
+use App\Models\TaskSubmission;
+use App\Services\CertificateImageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Endroid\QrCode\QrCode;
@@ -51,7 +54,7 @@ class CertificateController extends Controller
 
         Certificate::create($validated);
 
-        return redirect()->route('admin.certificates.index')->with('status', 'Certificate created ✅');
+        return redirect()->route('admin.certificates.index')->with('status', 'Certificate created âœ…');
     }
 
     public function edit(Certificate $certificate)
@@ -74,14 +77,14 @@ class CertificateController extends Controller
 
         $certificate->update($validated);
 
-        return redirect()->route('admin.certificates.index')->with('status', 'Certificate updated ✅');
+        return redirect()->route('admin.certificates.index')->with('status', 'Certificate updated âœ…');
     }
 
     public function destroy(Certificate $certificate)
     {
         $certificate->delete();
 
-        return redirect()->route('admin.certificates.index')->with('status', 'Certificate deleted ✅');
+        return redirect()->route('admin.certificates.index')->with('status', 'Certificate deleted âœ…');
     }
 public function qrCode(Certificate $certificate)
     {
@@ -98,7 +101,54 @@ public function qrCode(Certificate $certificate)
             'Content-Type' => 'image/png',
             'Content-Disposition' => 'inline; filename="qr-' . $certificate->certificate_number . '.png"',
         ]);
-    }   private function generateNumber(): string
+    }       public function download(Certificate $certificate, CertificateImageService $service)
+    {
+        $png = $service->png($certificate);
+
+        return response($png, 200, [
+            'Content-Type' => 'image/png',
+            'Content-Disposition' => 'attachment; filename="certificate-'.$certificate->certificate_number.'.png"',
+        ]);
+    }
+
+    public function issueApproved()
+    {
+        $applicantIds = TaskSubmission::where('status', 'approved')
+            ->whereNotNull('task_applicant_id')
+            ->distinct()
+            ->pluck('task_applicant_id');
+
+        $created = 0;
+        $skipped = 0;
+
+        foreach ($applicantIds as $id) {
+            $applicant = TaskApplicant::find($id);
+            if (! $applicant) {
+                continue;
+            }
+
+            if (Certificate::where('full_name', $applicant->full_name)->exists()) {
+                $skipped++;
+                continue;
+            }
+
+            Certificate::create([
+                'certificate_number' => $this->generateNumber(),
+                'full_name'          => $applicant->full_name,
+                'title'              => 'Web Development Internship',
+                'application_id'     => null,
+                'issue_date'         => now()->toDateString(),
+                'completion_date'    => now()->toDateString(),
+                'status'             => 'valid',
+            ]);
+
+            $created++;
+        }
+
+        return back()->with('status', "{$created} certificate(s) issued, {$skipped} already existed");
+    }
+
+    private function generateNumber(): string
     {
         do {
             $number = 'NSH-' . date('Y') . '-' . strtoupper(Str::random(6));
