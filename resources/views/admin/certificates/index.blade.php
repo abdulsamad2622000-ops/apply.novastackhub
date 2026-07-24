@@ -72,3 +72,4 @@
     {{ $certificates->links() }}
 </div>
 @endsection
+<style>.pagination svg, nav[role="navigation"] svg { width:16px !important; height:16px !important; vertical-align:middle; } nav[role="navigation"] { display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:14px; margin-top:16px; } nav[role="navigation"] a, nav[role="navigation"] span { padding:6px 10px; border-radius:6px; text-decoration:none; }</style>
