@@ -59,7 +59,7 @@ class CertificateController extends Controller
 
         Certificate::create($validated);
 
-        return redirect()->route('admin.certificates.index')->with('status', 'Certificate created ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦');
+        return redirect()->route('admin.certificates.index')->with('status', 'Certificate created ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦');
     }
 
     public function edit(Certificate $certificate)
@@ -85,14 +85,14 @@ class CertificateController extends Controller
 
         $certificate->update($validated);
 
-        return redirect()->route('admin.certificates.index')->with('status', 'Certificate updated ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦');
+        return redirect()->route('admin.certificates.index')->with('status', 'Certificate updated ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦');
     }
 
     public function destroy(Certificate $certificate)
     {
         $certificate->delete();
 
-        return redirect()->route('admin.certificates.index')->with('status', 'Certificate deleted ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦');
+        return redirect()->route('admin.certificates.index')->with('status', 'Certificate deleted ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦');
     }
 public function qrCode(Certificate $certificate)
     {
@@ -206,7 +206,7 @@ public function qrCode(Certificate $certificate)
         return view('admin.certificates.quick');
     }
 
-    public function quickStore(Request $request, CertificateImageService $service)
+    public function quickStore(Request $request)
     {
         $data = $request->validate([
             'full_name'  => ['required', 'string', 'max:255'],
@@ -228,10 +228,21 @@ public function qrCode(Certificate $certificate)
             'status'             => 'valid',
         ]);
 
-        return response($service->pdf($certificate), 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="certificate-'.$certificate->certificate_number.'.pdf"',
-        ]);
+        $message = 'Certificate created for '.$certificate->full_name.' ('.$certificate->certificate_number.').';
+
+        if ($request->boolean('send_email') && $certificate->email) {
+            try {
+                Mail::to($certificate->email)->send(new CertificateIssued($certificate));
+                $certificate->update(['emailed_at' => now()]);
+                $message .= ' Emailed to '.$certificate->email.'.';
+            } catch (\Throwable $ex) {
+                $message .= ' Email failed: '.$ex->getMessage();
+            }
+        }
+
+        return redirect()
+            ->route('admin.certificates.index', ['search' => $certificate->certificate_number])
+            ->with('status', $message.' Use the PDF link below to download it.');
     }
 
     public function issueApproved()

@@ -49,7 +49,9 @@
             <input type="email" id="email" name="email" value="{{ old('email') }}">
         </div>
 
-        <button type="submit" class="btn btn-primary">Generate &amp; Download PDF</button>
+        <div class="form-group"><label style="font-weight:normal;"><input type="checkbox" name="send_email" value="1"> Email this certificate to the student (email zaroori hai upar)</label></div>
+
+        <button type="submit" class="btn btn-primary">Create Certificate</button>
     </form>
 </div>
 @endsection
