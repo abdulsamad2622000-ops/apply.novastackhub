@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Certificate extends Model
 {
     protected $fillable = [
-        'certificate_number', 'full_name', 'email', 'title', 'application_id',
+        'certificate_number', 'full_name', 'email', 'title', 'source', 'application_id',
         'start_date', 'end_date',
         'issue_date', 'completion_date', 'status', 'emailed_at', 'notes',
     ];

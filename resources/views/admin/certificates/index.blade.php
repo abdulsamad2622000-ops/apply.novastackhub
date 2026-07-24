@@ -19,6 +19,13 @@
     <div class="alert alert-success">{{ session('status') }}</div>
 @endif
 
+<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+    @php $src = request('source'); @endphp
+    <a href="{{ route('admin.certificates.index') }}" style="padding:7px 14px;border-radius:8px;text-decoration:none;font-size:13.5px;font-weight:600;{{ $src ? 'background:#fff;border:1px solid #e2e6ef;color:#5a6b7e;' : 'background:#e8f0fe;color:#2563eb;' }}">All</a>
+    <a href="{{ route('admin.certificates.index', ['source' => 'quick']) }}" style="padding:7px 14px;border-radius:8px;text-decoration:none;font-size:13.5px;font-weight:600;{{ $src === 'quick' ? 'background:#e8f0fe;color:#2563eb;' : 'background:#fff;border:1px solid #e2e6ef;color:#5a6b7e;' }}">Quick</a>
+    <a href="{{ route('admin.certificates.index', ['source' => 'approved']) }}" style="padding:7px 14px;border-radius:8px;text-decoration:none;font-size:13.5px;font-weight:600;{{ $src === 'approved' ? 'background:#e8f0fe;color:#2563eb;' : 'background:#fff;border:1px solid #e2e6ef;color:#5a6b7e;' }}">Approved batch</a>
+</div>
+
 <form method="GET" action="{{ route('admin.certificates.index') }}" style="margin-bottom: 16px;">
     <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name or certificate number..." style="padding: 10px; width: 320px; max-width: 100%;">
     <button type="submit" class="btn btn-secondary">Search</button>
@@ -41,7 +48,7 @@
             <tr>
                 <td>{{ $cert->certificate_number }}</td>
                 <td>{{ $cert->full_name }}</td>
-                <td>{{ $cert->email ?: 'â€”' }}</td>
+                <td>{{ $cert->email ?: 'Ã¢â‚¬â€' }}</td>
                 <td>{{ $cert->title }}</td>
                 <td>{{ $cert->issue_date->format('d M Y') }}</td>
                 <td>
