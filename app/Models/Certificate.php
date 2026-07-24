@@ -10,7 +10,7 @@ class Certificate extends Model
     protected $fillable = [
         'certificate_number', 'full_name', 'email', 'title', 'application_id',
         'start_date', 'end_date',
-        'issue_date', 'completion_date', 'status', 'notes',
+        'issue_date', 'completion_date', 'status', 'emailed_at', 'notes',
     ];
 
     protected function casts(): array
