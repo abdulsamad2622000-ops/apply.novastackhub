@@ -11,7 +11,7 @@
             @csrf
             <button type="submit" class="btn btn-secondary">Issue for approved students</button>
         </form>
-        <a href="{{ route('admin.certificates.create') }}" class="btn btn-primary">+ New Certificate</a>
+        <form method="POST" action="{{ route('admin.certificates.emailAll') }}" onsubmit="return confirm('Email certificates to all students who have not received one yet?');" style="display:inline;">@csrf<button type="submit" class="btn btn-secondary">Email all pending</button></form> <a href="{{ route('admin.certificates.create') }}" class="btn btn-primary">+ New Certificate</a>
     </div>
 </div>
 
@@ -50,7 +50,7 @@
                     @endif
                 </td>
               <td class="actions">
-                    <a href="{{ route('admin.certificates.view', $cert) }}" target="_blank" style="color:#0f766e; font-weight:600;">View</a> <a href="{{ route('admin.certificates.pdf', $cert) }}" style="color:#b91c1c; font-weight:600;">PDF</a> <a href="{{ route('admin.certificates.download', $cert) }}" style="color:#2563eb; font-weight:600;">PNG</a>
+                    <form method="POST" action="{{ route('admin.certificates.email', $cert) }}" style="display:inline;" onsubmit="return confirm('Email this certificate to the student?');">@csrf<button type="submit" style="background:none;border:none;padding:0;color:{{ $cert->emailed_at ? '#16a34a' : '#7c3aed' }};font-weight:600;cursor:pointer;font-size:inherit;font-family:inherit;">{{ $cert->emailed_at ? 'Emailed' : 'Email' }}</button></form> <a href="{{ route('admin.certificates.view', $cert) }}" target="_blank" style="color:#0f766e; font-weight:600;">View</a> <a href="{{ route('admin.certificates.pdf', $cert) }}" style="color:#b91c1c; font-weight:600;">PDF</a> <a href="{{ route('admin.certificates.download', $cert) }}" style="color:#2563eb; font-weight:600;">PNG</a>
                     <a href="{{ route('admin.certificates.qr', $cert) }}" target="_blank">QR Code</a>
                     <a href="{{ route('admin.certificates.edit', $cert) }}">Edit</a>
                     <form method="POST" action="{{ route('admin.certificates.destroy', $cert) }}" onsubmit="return confirm('Delete this certificate?');" style="display:inline">

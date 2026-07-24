@@ -19,6 +19,11 @@
 </div>
 
 <div class="form-group">
+    <label for="email">Student Email</label>
+    <input type="email" id="email" name="email" value="{{ old('email', $certificate->email ?? '') }}">
+</div>
+
+<div class="form-group">
     <label for="title">Title (e.g. Web Development Internship)</label>
     <input type="text" id="title" name="title" value="{{ old('title', $certificate->title ?? '') }}" required>
 </div>

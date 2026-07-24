@@ -103,6 +103,8 @@ Route::get('/task-applicants-quick-add', [TaskApplicantQuickAddController::class
     Route::get('/certificates/{certificate}/download', [CertificateController::class, 'download'])->name('certificates.download');
     Route::get('/certificates/{certificate}/view', [CertificateController::class, 'view'])->name('certificates.view');
     Route::get('/certificates/{certificate}/pdf', [CertificateController::class, 'pdf'])->name('certificates.pdf');
+    Route::post('/certificates/email-all', [CertificateController::class, 'sendAllEmails'])->name('certificates.emailAll');
+    Route::post('/certificates/{certificate}/email', [CertificateController::class, 'sendEmail'])->name('certificates.email');
     Route::post('/certificates', [CertificateController::class, 'store'])->name('certificates.store');
     Route::get('/certificates/{certificate}/edit', [CertificateController::class, 'edit'])->name('certificates.edit');
     Route::put('/certificates/{certificate}', [CertificateController::class, 'update'])->name('certificates.update');

@@ -7,6 +7,8 @@ use App\Models\Certificate;
 use App\Models\TaskApplicant;
 use App\Models\TaskSubmission;
 use App\Services\CertificateImageService;
+use App\Mail\CertificateIssued;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Endroid\QrCode\QrCode;
@@ -44,6 +46,7 @@ class CertificateController extends Controller
         $validated = $request->validate([
             'certificate_number' => ['required', 'string', 'max:100', 'unique:certificates,certificate_number'],
             'full_name' => ['required', 'string', 'max:255'],
+            'email' => ['nullable', 'email', 'max:255'],
             'title' => ['required', 'string', 'max:255'],
             'application_id' => ['nullable', 'exists:applications,id'],
             'start_date' => ['nullable', 'date'],
@@ -56,7 +59,7 @@ class CertificateController extends Controller
 
         Certificate::create($validated);
 
-        return redirect()->route('admin.certificates.index')->with('status', 'Certificate created Ã¢Å“â€¦');
+        return redirect()->route('admin.certificates.index')->with('status', 'Certificate created ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦');
     }
 
     public function edit(Certificate $certificate)
@@ -69,6 +72,7 @@ class CertificateController extends Controller
         $validated = $request->validate([
             'certificate_number' => ['required', 'string', 'max:100', 'unique:certificates,certificate_number,' . $certificate->id],
             'full_name' => ['required', 'string', 'max:255'],
+            'email' => ['nullable', 'email', 'max:255'],
             'title' => ['required', 'string', 'max:255'],
             'application_id' => ['nullable', 'exists:applications,id'],
             'start_date' => ['nullable', 'date'],
@@ -81,14 +85,14 @@ class CertificateController extends Controller
 
         $certificate->update($validated);
 
-        return redirect()->route('admin.certificates.index')->with('status', 'Certificate updated Ã¢Å“â€¦');
+        return redirect()->route('admin.certificates.index')->with('status', 'Certificate updated ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦');
     }
 
     public function destroy(Certificate $certificate)
     {
         $certificate->delete();
 
-        return redirect()->route('admin.certificates.index')->with('status', 'Certificate deleted Ã¢Å“â€¦');
+        return redirect()->route('admin.certificates.index')->with('status', 'Certificate deleted ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦');
     }
 public function qrCode(Certificate $certificate)
     {
@@ -131,6 +135,72 @@ public function qrCode(Certificate $certificate)
         ]);
     }
 
+    public function sendEmail(Certificate $certificate)
+    {
+        $email = $this->resolveEmail($certificate);
+
+        if (! $email) {
+            return back()->with('status', 'No email found for '.$certificate->full_name.'. Add it via Edit first.');
+        }
+
+        try {
+            Mail::to($email)->send(new CertificateIssued($certificate));
+            $certificate->update(['emailed_at' => now()]);
+
+            return back()->with('status', 'Certificate emailed to '.$email);
+        } catch (\Throwable $e) {
+            return back()->with('status', 'Failed to email '.$email.': '.$e->getMessage());
+        }
+    }
+
+    public function sendAllEmails()
+    {
+        $certificates = Certificate::where('status', 'valid')->whereNull('emailed_at')->get();
+
+        $sent = 0;
+        $failed = 0;
+        $noEmail = 0;
+
+        foreach ($certificates as $certificate) {
+            $email = $this->resolveEmail($certificate);
+
+            if (! $email) {
+                $noEmail++;
+                continue;
+            }
+
+            try {
+                Mail::to($email)->send(new CertificateIssued($certificate));
+                $certificate->update(['emailed_at' => now()]);
+                $sent++;
+                usleep(400000);
+            } catch (\Throwable $e) {
+                $failed++;
+            }
+        }
+
+        return back()->with('status', "Emails sent: {$sent}, failed: {$failed}, no address: {$noEmail}");
+    }
+
+    private function resolveEmail(Certificate $certificate): ?string
+    {
+        if ($certificate->email) {
+            return $certificate->email;
+        }
+
+        $applicant = TaskApplicant::whereRaw('LOWER(full_name) = ?', [mb_strtolower(trim($certificate->full_name))])
+            ->whereNotNull('email')
+            ->first();
+
+        if ($applicant) {
+            $certificate->update(['email' => $applicant->email]);
+
+            return $applicant->email;
+        }
+
+        return null;
+    }
+
     public function issueApproved()
     {
         $applicantIds = TaskSubmission::where('status', 'approved')
@@ -155,6 +225,7 @@ public function qrCode(Certificate $certificate)
             Certificate::create([
                 'certificate_number' => $this->generateNumber(),
                 'full_name'          => $applicant->full_name,
+                'email'              => $applicant->email,
                 'title'              => 'Web Development Internship',
                 'application_id'     => null,
                 'start_date'         => CertificateImageService::DEFAULT_START,
