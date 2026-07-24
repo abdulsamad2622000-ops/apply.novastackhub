@@ -9,6 +9,24 @@ use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
+    public function allSubmissions(Request $request)
+    {
+        $activeTaskId = $request->query('task_id');
+
+        $submissions = TaskSubmission::with(['task', 'taskApplicant'])
+            ->when($activeTaskId, fn ($q) => $q->where('task_id', $activeTaskId))
+            ->latest()
+            ->get();
+
+        $tasks = Task::orderBy('sort_order')->orderBy('id')->get();
+
+        return view('admin.tasks.all-submissions', [
+            'submissions'  => $submissions,
+            'tasks'        => $tasks,
+            'activeTaskId' => $activeTaskId,
+        ]);
+    }
+
     public function index()
     {
         $tasks = Task::withCount('submissions')
@@ -42,7 +60,7 @@ class TaskController extends Controller
             'is_active' => $request->boolean('is_active', true),
         ]);
 
-        return redirect()->route('admin.tasks.index')->with('status', 'Task ban gaya ✅');
+        return redirect()->route('admin.tasks.index')->with('status', 'Task ban gaya âœ…');
     }
 
     public function edit(Task $task)
@@ -68,13 +86,13 @@ class TaskController extends Controller
             'is_active' => $request->boolean('is_active', true),
         ]);
 
-        return redirect()->route('admin.tasks.index')->with('status', 'Task update ho gaya ✅');
+        return redirect()->route('admin.tasks.index')->with('status', 'Task update ho gaya âœ…');
     }
 
     public function destroy(Task $task)
     {
         $task->delete();
-        return redirect()->route('admin.tasks.index')->with('status', 'Task delete ho gaya ✅');
+        return redirect()->route('admin.tasks.index')->with('status', 'Task delete ho gaya âœ…');
     }
 
     public function submissions(Task $task)
@@ -99,6 +117,6 @@ class TaskController extends Controller
             'admin_feedback' => $validated['admin_feedback'] ?? null,
         ]);
 
-        return back()->with('status', 'Submission status update ho gaya ✅');
+        return back()->with('status', 'Submission status update ho gaya âœ…');
     }
 }

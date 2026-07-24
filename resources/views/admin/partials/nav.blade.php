@@ -15,6 +15,7 @@
         <a href="{{ route('admin.taskApplicants.quickadd') }}" class="{{ $current === 'task-applicants-quickadd' ? 'is-active' : '' }}">Add Applicant</a>
 
         <a href="{{ route('admin.tasks.index') }}" class="{{ $current === 'tasks' ? 'is-active' : '' }}">Tasks</a>
+        <a href="{{ route('admin.submissions.index') }}" class="{{ $current === 'submissions' ? 'is-active' : '' }}">Submissions</a>
         <a href="{{ route('admin.certificates.index') }}" class="{{ $current === 'certificates' ? 'is-active' : '' }}">Certificates</a>
         <a href="{{ route('admin.applications.quickadd') }}" class="{{ $current === 'quickadd' ? 'is-active' : '' }}">Quick Add</a>    </div>
     <form method="POST" action="{{ route('admin.logout') }}">
