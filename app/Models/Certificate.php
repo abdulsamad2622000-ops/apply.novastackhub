@@ -9,6 +9,7 @@ class Certificate extends Model
 {
     protected $fillable = [
         'certificate_number', 'full_name', 'title', 'application_id',
+        'start_date', 'end_date',
         'issue_date', 'completion_date', 'status', 'notes',
     ];
 
@@ -17,6 +18,8 @@ class Certificate extends Model
         return [
             'issue_date' => 'date',
             'completion_date' => 'date',
+            'start_date' => 'date',
+            'end_date' => 'date',
         ];
     }
 

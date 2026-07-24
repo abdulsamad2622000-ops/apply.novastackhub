@@ -24,6 +24,16 @@
 </div>
 
 <div class="form-group">
+    <label for="start_date">Internship Start Date</label>
+    <input type="date" id="start_date" name="start_date" value="{{ old('start_date', isset($certificate) && $certificate->start_date ? $certificate->start_date->format('Y-m-d') : '2026-06-01') }}">
+</div>
+
+<div class="form-group">
+    <label for="end_date">Internship End Date</label>
+    <input type="date" id="end_date" name="end_date" value="{{ old('end_date', isset($certificate) && $certificate->end_date ? $certificate->end_date->format('Y-m-d') : '2026-07-31') }}">
+</div>
+
+<div class="form-group">
     <label for="issue_date">Issue Date</label>
     <input type="date" id="issue_date" name="issue_date" value="{{ old('issue_date', isset($certificate) && $certificate->issue_date ? $certificate->issue_date->format('Y-m-d') : date('Y-m-d')) }}" required>
 </div>

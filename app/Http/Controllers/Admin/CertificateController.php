@@ -46,6 +46,8 @@ class CertificateController extends Controller
             'full_name' => ['required', 'string', 'max:255'],
             'title' => ['required', 'string', 'max:255'],
             'application_id' => ['nullable', 'exists:applications,id'],
+            'start_date' => ['nullable', 'date'],
+            'end_date' => ['nullable', 'date'],
             'issue_date' => ['required', 'date'],
             'completion_date' => ['nullable', 'date'],
             'status' => ['required', 'in:valid,revoked'],
@@ -54,7 +56,7 @@ class CertificateController extends Controller
 
         Certificate::create($validated);
 
-        return redirect()->route('admin.certificates.index')->with('status', 'Certificate created âœ…');
+        return redirect()->route('admin.certificates.index')->with('status', 'Certificate created Ã¢Å“â€¦');
     }
 
     public function edit(Certificate $certificate)
@@ -69,6 +71,8 @@ class CertificateController extends Controller
             'full_name' => ['required', 'string', 'max:255'],
             'title' => ['required', 'string', 'max:255'],
             'application_id' => ['nullable', 'exists:applications,id'],
+            'start_date' => ['nullable', 'date'],
+            'end_date' => ['nullable', 'date'],
             'issue_date' => ['required', 'date'],
             'completion_date' => ['nullable', 'date'],
             'status' => ['required', 'in:valid,revoked'],
@@ -77,14 +81,14 @@ class CertificateController extends Controller
 
         $certificate->update($validated);
 
-        return redirect()->route('admin.certificates.index')->with('status', 'Certificate updated âœ…');
+        return redirect()->route('admin.certificates.index')->with('status', 'Certificate updated Ã¢Å“â€¦');
     }
 
     public function destroy(Certificate $certificate)
     {
         $certificate->delete();
 
-        return redirect()->route('admin.certificates.index')->with('status', 'Certificate deleted âœ…');
+        return redirect()->route('admin.certificates.index')->with('status', 'Certificate deleted Ã¢Å“â€¦');
     }
 public function qrCode(Certificate $certificate)
     {
@@ -108,6 +112,22 @@ public function qrCode(Certificate $certificate)
         return response($png, 200, [
             'Content-Type' => 'image/png',
             'Content-Disposition' => 'attachment; filename="certificate-'.$certificate->certificate_number.'.png"',
+        ]);
+    }
+
+    public function view(Certificate $certificate, CertificateImageService $service)
+    {
+        return response($service->png($certificate), 200, [
+            'Content-Type' => 'image/png',
+            'Content-Disposition' => 'inline; filename="certificate-'.$certificate->certificate_number.'.png"',
+        ]);
+    }
+
+    public function pdf(Certificate $certificate, CertificateImageService $service)
+    {
+        return response($service->pdf($certificate), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="certificate-'.$certificate->certificate_number.'.pdf"',
         ]);
     }
 
@@ -137,6 +157,8 @@ public function qrCode(Certificate $certificate)
                 'full_name'          => $applicant->full_name,
                 'title'              => 'Web Development Internship',
                 'application_id'     => null,
+                'start_date'         => CertificateImageService::DEFAULT_START,
+                'end_date'           => CertificateImageService::DEFAULT_END,
                 'issue_date'         => now()->toDateString(),
                 'completion_date'    => now()->toDateString(),
                 'status'             => 'valid',

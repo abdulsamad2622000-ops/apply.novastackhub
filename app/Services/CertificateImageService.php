@@ -7,6 +7,9 @@ use Endroid\QrCode\Builder\Builder;
 
 class CertificateImageService
 {
+    public const DEFAULT_START = '2026-06-01';
+    public const DEFAULT_END   = '2026-07-31';
+
     public function png(Certificate $certificate): string
     {
         $dir = resource_path('certificate');
@@ -26,7 +29,30 @@ class CertificateImageService
         $name = $certificate->full_name;
         $certid = $certificate->certificate_number;
 
+        $start = $certificate->start_date
+            ? $certificate->start_date->format('F d')
+            : \Carbon\Carbon::parse(self::DEFAULT_START)->format('F d');
+        $end = $certificate->end_date
+            ? $certificate->end_date->format('F d, Y')
+            : \Carbon\Carbon::parse(self::DEFAULT_END)->format('F d, Y');
+
         $this->centerBaseline($im, $name, 672, 66, $fName, $navy, $W / 2);
+
+        $szd = 25;
+        $d1 = 'at NovaStack Hub from ';
+        $d3 = ' to ';
+        $w1 = $this->textWidth($szd, $fPara, $d1);
+        $w2 = $this->textWidth($szd, $fPara, $start);
+        $w3 = $this->textWidth($szd, $fPara, $d3);
+        $w4 = $this->textWidth($szd, $fPara, $end);
+        $xd = $W / 2 - ($w1 + $w2 + $w3 + $w4) / 2;
+        imagettftext($im, $szd, 0, (int) $xd, 842, $navy, $fPara, $d1);
+        $xd += $w1;
+        imagettftext($im, $szd, 0, (int) $xd, 842, $cyan, $fPara, $start);
+        $xd += $w2;
+        imagettftext($im, $szd, 0, (int) $xd, 842, $navy, $fPara, $d3);
+        $xd += $w3;
+        imagettftext($im, $szd, 0, (int) $xd, 842, $cyan, $fPara, $end);
 
         $sz = 25;
         $s1 = 'Throughout the internship, ';
@@ -57,6 +83,51 @@ class CertificateImageService
         imagedestroy($im);
 
         return $data;
+    }
+
+    public function pdf(Certificate $certificate): string
+    {
+        $png = $this->png($certificate);
+        $im = imagecreatefromstring($png);
+        $w = imagesx($im);
+        $h = imagesy($im);
+        ob_start();
+        imagejpeg($im, null, 92);
+        $jpg = ob_get_clean();
+        imagedestroy($im);
+
+        $pw = 841.89;
+        $ph = 595.28;
+        $scale = min($pw / $w, $ph / $h);
+        $iw = $w * $scale;
+        $ih = $h * $scale;
+        $ox = ($pw - $iw) / 2;
+        $oy = ($ph - $ih) / 2;
+        $content = sprintf('q %.2F 0 0 %.2F %.2F %.2F cm /Im0 Do Q', $iw, $ih, $ox, $oy);
+
+        $objs = [
+            1 => '<< /Type /Catalog /Pages 2 0 R >>',
+            2 => '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+            3 => "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 {$pw} {$ph}] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>",
+            4 => "<< /Type /XObject /Subtype /Image /Width {$w} /Height {$h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ".strlen($jpg)." >>\nstream\n".$jpg."\nendstream",
+            5 => '<< /Length '.strlen($content)." >>\nstream\n".$content."\nendstream",
+        ];
+
+        $pdf = "%PDF-1.4\n";
+        $offsets = [];
+        foreach ($objs as $n => $body) {
+            $offsets[$n] = strlen($pdf);
+            $pdf .= "{$n} 0 obj\n{$body}\nendobj\n";
+        }
+        $xref = strlen($pdf);
+        $count = count($objs) + 1;
+        $pdf .= "xref\n0 {$count}\n0000000000 65535 f \n";
+        foreach ($objs as $n => $_) {
+            $pdf .= sprintf("%010d 00000 n \n", $offsets[$n]);
+        }
+        $pdf .= "trailer\n<< /Size {$count} /Root 1 0 R >>\nstartxref\n{$xref}\n%%EOF";
+
+        return $pdf;
     }
 
     private function textWidth(int $size, string $font, string $text): float

@@ -1,0 +1,1 @@
+<?php $f="resources/certificate/base.png"; $im=imagecreatefrompng($f); $w=imagecolorallocate($im,255,255,255); imagefilledrectangle($im,700,806,1700,858,$w); imagepng($im,$f); imagedestroy($im); echo "base.png patched\n";

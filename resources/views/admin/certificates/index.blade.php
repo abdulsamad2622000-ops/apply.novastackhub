@@ -50,7 +50,7 @@
                     @endif
                 </td>
               <td class="actions">
-                    <a href="{{ route('admin.certificates.download', $cert) }}" style="color:#2563eb; font-weight:600;">Download</a>
+                    <a href="{{ route('admin.certificates.view', $cert) }}" target="_blank" style="color:#0f766e; font-weight:600;">View</a> <a href="{{ route('admin.certificates.pdf', $cert) }}" style="color:#b91c1c; font-weight:600;">PDF</a> <a href="{{ route('admin.certificates.download', $cert) }}" style="color:#2563eb; font-weight:600;">PNG</a>
                     <a href="{{ route('admin.certificates.qr', $cert) }}" target="_blank">QR Code</a>
                     <a href="{{ route('admin.certificates.edit', $cert) }}">Edit</a>
                     <form method="POST" action="{{ route('admin.certificates.destroy', $cert) }}" onsubmit="return confirm('Delete this certificate?');" style="display:inline">
