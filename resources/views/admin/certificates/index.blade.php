@@ -29,6 +29,7 @@
         <tr>
             <th>Certificate #</th>
             <th>Name</th>
+            <th>Email</th>
             <th>Title</th>
             <th>Issue Date</th>
             <th>Status</th>
@@ -40,6 +41,7 @@
             <tr>
                 <td>{{ $cert->certificate_number }}</td>
                 <td>{{ $cert->full_name }}</td>
+                <td>{{ $cert->email ?: '—' }}</td>
                 <td>{{ $cert->title }}</td>
                 <td>{{ $cert->issue_date->format('d M Y') }}</td>
                 <td>
