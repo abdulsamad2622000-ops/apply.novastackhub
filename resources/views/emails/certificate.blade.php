@@ -3,9 +3,8 @@
 <head><meta charset="utf-8"></head>
 <body style="margin:0;padding:0;background:#f4f6fb;font-family:Arial,Helvetica,sans-serif;color:#1f2937;">
     <div style="max-width:600px;margin:0 auto;padding:24px;">
-        <div style="background:#12256b;color:#fff;padding:22px 26px;border-radius:12px 12px 0 0;">
-            <div style="font-size:20px;font-weight:bold;">NovaStackHub</div>
-            <div style="font-size:12px;opacity:.85;">Empowering Digital Vision</div>
+        <div style="background:#ffffff;padding:20px 26px;border-radius:12px 12px 0 0;border-bottom:3px solid #17b3d4;text-align:center;">
+            <img src="https://www.novastackhub.com/img/logo.png" alt="NovaStackHub" width="220" style="max-width:220px;height:auto;display:inline-block;">
         </div>
 
         <div style="background:#fff;padding:26px;border-radius:0 0 12px 12px;">
